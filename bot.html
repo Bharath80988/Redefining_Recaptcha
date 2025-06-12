@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bot Simulation</title>
+</head>
+<body>
+  <h2>Simulated Bot Login</h2>
+  <form id="botForm">
+    <input id="email" value="bot@example.com" />
+    <br />
+    <input id="password" value="botpassword" />
+    <br />
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    async function simulateBotLogin() {
+      const features = [
+        0,       // mouse_avg_speed
+        0.01,    // mouse_path_deviation
+        0,       // hover_time_ms
+        0, 0,    // click_offset_x, click_offset_y
+        0,       // moved_before_submit
+        0,       // avg_keystroke_delay_ms
+        0, 0,    // backspace_count, tab_key_count
+        1,       // paste_detected
+        0,       // focus_switch_delay_avg_ms
+        0,       // idle_time_ms
+        100,     // delay_before_submit_ms
+        1,       // is_webdriver (simulate headless)
+        0,       // has_plugins
+        1,       // screen_res_mismatch
+        1,       // missing_headers_score
+        0,       // honeypot_filled
+        1,       // unnatural_field_sequence
+        1,       // geo_ip_mismatch
+        1        // request_too_fast
+      ];
+
+      try {
+        const response = await fetch("http://localhost:5001/api/check-human", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ features }),
+        });
+
+        const result = await response.json();
+        if (result.result === 1) {
+          alert("✅ Bot successfully detected!");
+        } else {
+          alert("❌ False negative — bot not detected.");
+        }
+      } catch (error) {
+        console.error("Error calling backend:", error);
+        alert("Server error");
+      }
+    }
+
+    document.getElementById("botForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      simulateBotLogin();
+    });
+  </script>
+</body>
+</html>
